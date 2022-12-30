@@ -1,0 +1,17 @@
+:root {
+    --v-media-text-color: rgb(87 79 133 / 84%);
+    --v-media-attachment-bg: #eae7e796;
+    --v-media-attachment-hover-bg: rgb(235 232 248 / 37%);
+    --v-media-attachment-hover-border-color: rgb(224 221 245 / 95%);
+    --v-media-duration: 0.5s;
+    --v-media-attachment-font-size: 14px;
+    --v-media-border-color: rgba(81, 73, 130, 0.25);
+    --v-media-border-width: 2px;
+    --v-media-error-color: #e74c3c;
+    --vt-c-indigo: #2c3e50;
+}
+
+
+.text-uppercase {
+    text-transform: uppercase;
+}
