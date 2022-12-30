@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import VMediaAttachment from "./components/VMediaAttachment.vue";
+import VMedia from "@/components/VMedia.vue";
 
 const removeEvent = (id: string) => {
   console.log("remove id", id);
@@ -21,7 +21,7 @@ const allMedia = (files: string | File) => {
           </div>
           <div class="mb-3">
             <label class="form-label">File</label>
-            <VMediaAttachment
+            <v-media
               :rules="{
                 accept: ['image/png', 'image/jpeg', 'application/pdf'],
                 maxSizeInKB: 1024,
