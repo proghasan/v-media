@@ -1,5 +1,12 @@
 <script lang="ts" setup>
 import VMediaAttachment from "./components/VMediaAttachment.vue";
+
+const removeEvent = (id: string) => {
+  console.log("remove id", id);
+};
+const allMedia = (files: string | File) => {
+  console.log(files);
+};
 </script>
 
 <template>
@@ -20,6 +27,8 @@ import VMediaAttachment from "./components/VMediaAttachment.vue";
                 maxSizeInKB: 1024,
                 allowMultiple: true,
               }"
+              @mediaHandel="allMedia"
+              @remove="removeEvent"
             />
           </div>
           <button class="btn btn-primary" type="submit">Save & Change</button>

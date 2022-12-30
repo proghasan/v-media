@@ -1,10 +1,12 @@
 interface Result {
-    id?: string;
-    fileName?: string | undefined;
-    fileSize?: number;
-    fileSrc?: string;
-    file?: File;
-    isError?: Boolean;
+  id?: number;
+  fileName?: string | undefined;
+  fileSize?: number;
+  fileType?: string;
+  fileSrc?: string;
+  file?: File | string;
+  isError?: Boolean;
+  isPreviewAble?: Boolean;
 }
 
 export default Result;

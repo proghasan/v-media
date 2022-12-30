@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import PlusIcon from "./icons/PlusIcon.vue";
-import { PropType, ref } from "vue";
+import { PropType, ref, watch } from "vue";
 import type Rules from "@/types/Rules";
 import { useAttachment } from "@/composable/useAttachment";
-import FilePreviewer from "./FilePreviewer.vue";
+import SingleAttachmentCard from "@/components/PreviewCard.vue";
 
 const props = defineProps({
   rules: {
@@ -18,8 +18,9 @@ const props = defineProps({
     },
   },
 });
-
+const emit = defineEmits(["remove", "mediaHandel"]);
 const { setAttachment, selectedFiles, remove } = useAttachment();
+
 const active = ref(false);
 const attachment = ref("");
 const toggleActive = () => {
@@ -32,32 +33,33 @@ const dropHandel = (event: DragEvent): void => {
   const files = event.dataTransfer?.files;
   setAttachment(files, props.rules);
 };
-
 const onFileChange = (event: Event): void => {
   const target = event.target as HTMLInputElement;
   const files = target && target.files ? target.files : undefined;
   setAttachment(files, props.rules);
 };
+const removeAttachment = (index: number) => {
+  remove(index);
+  emit("remove", index);
+};
+watch(selectedFiles, () => {
+  emit("mediaHandel", selectedFiles.value);
+});
 </script>
 <template>
   <div class="v-media-attachment-wrapper">
-    <div v-if="selectedFiles && selectedFiles.length > 0" class="v-media-item">
-      <FilePreviewer :src="selectedFiles[0].fileSrc" />
-      <div class="v-media-properties">
-        <div class="v-media-property text-uppercase">
-          {{ selectedFiles[0].fileName }}
-        </div>
-        <div class="v-media-property">{{ selectedFiles[0].fileSize }} KB</div>
-        <div class="v-media-property">
-          <button
-            class="v-media-secondary-button"
-            @click.prevent="remove(selectedFiles[0].id)"
-          >
-            Remove
-          </button>
-        </div>
+    <template v-if="selectedFiles && selectedFiles.length > 0">
+      <div
+        v-for="(attachment, key) in selectedFiles"
+        :key="key"
+        class="v-media-item"
+      >
+        <SingleAttachmentCard
+          :attachment="attachment"
+          @remove="removeAttachment"
+        />
       </div>
-    </div>
+    </template>
     <div
       v-else
       :class="{
@@ -170,16 +172,5 @@ const onFileChange = (event: Event): void => {
       }
     }
   }
-}
-
-.v-media-secondary-button {
-  background: none;
-  border: unset;
-  text-align: left;
-  padding: 0;
-  margin-top: 1px;
-  text-decoration: underline;
-  cursor: pointer;
-  color: var(--v-media-text-color);
 }
 </style>

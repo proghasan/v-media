@@ -15,3 +15,14 @@
 .text-uppercase {
     text-transform: uppercase;
 }
+
+.button-link {
+    background: none;
+    border: unset;
+    text-align: left;
+    padding: 0;
+    margin-top: 1px;
+    text-decoration: underline;
+    cursor: pointer;
+    color: var(--v-media-text-color);
+}
