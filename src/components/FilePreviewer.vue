@@ -12,8 +12,11 @@ const props = defineProps<Props>();
   </div>
 </template>
 <style lang="scss" scoped>
+.v-media-wrapper {
+  display: flex;
+}
+
 .v-media-thumb {
-  margin: 0 1rem 0 0;
   position: relative;
   flex: none;
   width: 5rem;
@@ -22,7 +25,7 @@ const props = defineProps<Props>();
   img {
     width: 100%;
     aspect-ratio: 1/1;
-    object-fit: contain;
+    object-fit: cover;
   }
 }
 </style>

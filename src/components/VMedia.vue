@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-import PlusIcon from "./icons/PlusIcon.vue";
+import PlusIcon from "../assets/icons/PlusIcon.vue";
 import { PropType, ref, watch } from "vue";
 import type Rules from "@/types/Rules";
 import { useAttachment } from "@/composable/useAttachment";
-import SingleAttachmentCard from "@/components/PreviewCard.vue";
+import PreviewCard from "@/components/PreviewCard.vue";
+import ScrollPreviewCard from "@/components/ScrollPreviewCard.vue";
 
 const props = defineProps({
   rules: {
@@ -33,6 +34,26 @@ const dropHandel = (event: DragEvent): void => {
   const files = event.dataTransfer?.files;
   setAttachment(files, props.rules);
 };
+
+setAttachment(
+  [
+    "https://i2.wp.com/beebom.com/wp-content/uploads/2016/01/Reverse-Image-Search-Engines-Apps-And-Its-Uses-2016.jpg",
+    "https://images.unsplash.com/photo-1541411438265-4cb4687110f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
+    "https://images.unsplash.com/photo-1541411438265-4cb4687110f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
+    "https://images.unsplash.com/photo-1541411438265-4cb4687110f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
+    "https://images.unsplash.com/photo-1541411438265-4cb4687110f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
+    "https://images.unsplash.com/photo-1541411438265-4cb4687110f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
+    "https://images.unsplash.com/photo-1541411438265-4cb4687110f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
+    "https://images.unsplash.com/photo-1541411438265-4cb4687110f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
+    "https://images.unsplash.com/photo-1541411438265-4cb4687110f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
+    "https://images.unsplash.com/photo-1541411438265-4cb4687110f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
+    "https://images.unsplash.com/photo-1541411438265-4cb4687110f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
+    "https://images.unsplash.com/photo-1541411438265-4cb4687110f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
+    "https://images.unsplash.com/photo-1541411438265-4cb4687110f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
+  ],
+  props.rules
+);
+
 const onFileChange = (event: Event): void => {
   const target = event.target as HTMLInputElement;
   const files = target && target.files ? target.files : undefined;
@@ -47,25 +68,33 @@ watch(selectedFiles, () => {
 });
 </script>
 <template>
-  <div class="v-media-attachment-wrapper">
+  <div class="v-media-wrapper">
     <template v-if="selectedFiles && selectedFiles.length > 0">
-      <div
-        v-for="(attachment, key) in selectedFiles"
-        :key="key"
-        class="v-media-item"
-      >
-        <SingleAttachmentCard
+      <template v-if="selectedFiles.length === 1 && !props.rules.allowMultiple">
+        <PreviewCard
+          v-for="(attachment, key) in selectedFiles"
+          :key="key"
           :attachment="attachment"
           @remove="removeAttachment"
         />
-      </div>
+      </template>
+      <template v-else>
+        <div class="scroll-preview-wrapper">
+          <ScrollPreviewCard
+            v-for="(attachment, key) in selectedFiles"
+            :key="key"
+            :attachment="attachment"
+            @remove="removeAttachment"
+          />
+        </div>
+      </template>
     </template>
     <div
       v-else
       :class="{
         'has-error': selectedFiles.length > 0 && selectedFiles[0].isError,
       }"
-      class="v-media-attachment"
+      class="v-media"
       @click="clickHandel"
       @dragover.prevent
       @dragenter.prevent="toggleActive"
@@ -105,24 +134,26 @@ watch(selectedFiles, () => {
 </template>
 
 <style lang="scss" scoped>
-.v-media-attachment-wrapper {
-  .v-media-attachment {
+.v-media-wrapper {
+  display: flex;
+
+  .v-media {
     width: 100%;
     border: 1px dashed var(--v-media-border-color);
     border-width: var(--v-media-border-width);
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    background: var(--v-media-attachment-bg);
+    background: var(--v-media-bg);
     height: 70px;
     cursor: pointer;
-    font-size: var(--v-media-attachment-font-size);
+    font-size: var(--v-media-font-size);
     color: var(--v-media-text-color);
     transition: all var(--v-media-duration) ease;
 
     &:hover {
-      background: var(--v-media-attachment-hover-bg);
-      border: 2px dashed var(--v-media-attachment-hover-border-color);
+      background: var(--v-media-hover-bg);
+      border: 2px dashed var(--v-media-hover-border-color);
       border-width: var(--v-media-border-width);
     }
 
@@ -149,28 +180,6 @@ watch(selectedFiles, () => {
     border: 1px dashed var(--v-media-error-color);
     border-width: var(--v-media-border-width);
     color: red;
-  }
-
-  .v-media-item {
-    display: flex;
-    align-items: center;
-    min-width: 0;
-
-    .v-media-properties {
-      font-size: var(--v-media-attachment-font-size);
-      margin-top: 0;
-      margin-bottom: 0;
-      flex-grow: 1;
-      min-width: 0;
-
-      .v-media-property {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        --text-opacity: 1;
-        color: var(--v-media-text-color);
-      }
-    }
   }
 }
 </style>
