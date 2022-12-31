@@ -15,10 +15,10 @@ const remove = (index: number) => {
 </script>
 <template>
   <div class="v-media-card">
-    <FilePreviewer :src="prop.attachment.fileSrc" />
+    <FilePreviewer :src="prop.attachment.fileSrc"/>
     <div class="overlay">
       <div class="content">
-        <RemoveIcon @click.prevent="remove(prop.attachment.id)" />
+        <RemoveIcon @click.prevent="remove(prop.attachment.id)"/>
       </div>
     </div>
   </div>
@@ -32,7 +32,7 @@ const remove = (index: number) => {
 
   .v-media-card {
     border: 0.5px dashed var(--v-media-hover-border-color);
-    width: 5rem;
+    //width: 5rem;
     margin-right: 5px;
     display: flex;
     justify-content: center;

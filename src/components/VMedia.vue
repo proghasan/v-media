@@ -18,10 +18,18 @@ const props = defineProps({
       };
     },
   },
+  media: { type: [Array, String], required: false },
 });
 const emit = defineEmits(["remove", "mediaHandel"]);
-const { setAttachment, selectedFiles, remove } = useAttachment();
+const { setAttachment, selectedFiles, remove, hasError } = useAttachment();
+const fileProps =
+  typeof props.media === "string"
+    ? [props.media]
+    : Object.assign([], props.media);
 
+if (fileProps && fileProps?.length > 0) {
+  setAttachment(fileProps, props.rules);
+}
 const active = ref(false);
 const attachment = ref("");
 const toggleActive = () => {
@@ -34,26 +42,6 @@ const dropHandel = (event: DragEvent): void => {
   const files = event.dataTransfer?.files;
   setAttachment(files, props.rules);
 };
-
-setAttachment(
-  [
-    "https://i2.wp.com/beebom.com/wp-content/uploads/2016/01/Reverse-Image-Search-Engines-Apps-And-Its-Uses-2016.jpg",
-    "https://images.unsplash.com/photo-1541411438265-4cb4687110f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
-    "https://images.unsplash.com/photo-1541411438265-4cb4687110f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
-    "https://images.unsplash.com/photo-1541411438265-4cb4687110f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
-    "https://images.unsplash.com/photo-1541411438265-4cb4687110f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
-    "https://images.unsplash.com/photo-1541411438265-4cb4687110f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
-    "https://images.unsplash.com/photo-1541411438265-4cb4687110f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
-    "https://images.unsplash.com/photo-1541411438265-4cb4687110f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
-    "https://images.unsplash.com/photo-1541411438265-4cb4687110f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
-    "https://images.unsplash.com/photo-1541411438265-4cb4687110f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
-    "https://images.unsplash.com/photo-1541411438265-4cb4687110f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
-    "https://images.unsplash.com/photo-1541411438265-4cb4687110f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
-    "https://images.unsplash.com/photo-1541411438265-4cb4687110f2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
-  ],
-  props.rules
-);
-
 const onFileChange = (event: Event): void => {
   const target = event.target as HTMLInputElement;
   const files = target && target.files ? target.files : undefined;
@@ -63,9 +51,13 @@ const removeAttachment = (index: number) => {
   remove(index);
   emit("remove", index);
 };
-watch(selectedFiles, () => {
-  emit("mediaHandel", selectedFiles.value);
-});
+watch(
+  selectedFiles,
+  () => {
+    emit("mediaHandel", selectedFiles.value);
+  },
+  { deep: true }
+);
 </script>
 <template>
   <div class="v-media-wrapper">
@@ -90,11 +82,11 @@ watch(selectedFiles, () => {
       </template>
     </template>
     <div
-      v-else
+      v-if="props.rules.allowMultiple || selectedFiles.length === 0"
       :class="{
-        'has-error': selectedFiles.length > 0 && selectedFiles[0].isError,
+        'has-error': hasError,
       }"
-      class="v-media"
+      class="v-media mt-10"
       @click="clickHandel"
       @dragover.prevent
       @dragenter.prevent="toggleActive"
@@ -135,8 +127,6 @@ watch(selectedFiles, () => {
 
 <style lang="scss" scoped>
 .v-media-wrapper {
-  display: flex;
-
   .v-media {
     width: 100%;
     border: 1px dashed var(--v-media-border-color);

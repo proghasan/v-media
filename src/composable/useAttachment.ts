@@ -1,4 +1,4 @@
-import { reactive, toRefs } from "vue";
+import { reactive, ref, toRefs } from "vue";
 import type Rules from "@/types/Rules";
 import type Result from "@/types/Result";
 
@@ -6,7 +6,7 @@ export function useAttachment() {
   const state = reactive({
     selectedFiles: <Result[]>[],
   });
-
+  const hasError = ref<Boolean>(false);
   const previewAble = ["image"];
 
   function remove(index: number) {
@@ -21,13 +21,12 @@ export function useAttachment() {
     files: FileList | Array<string> | undefined,
     rules: Rules
   ) {
-    state.selectedFiles = [];
     if (files) {
       for (let i = 0; i < files.length; i++) {
         const selectedFile = <Result>{};
         const file = files[i];
         const fileType = getFileType(file);
-        selectedFile.id = i;
+        selectedFile.id = state.selectedFiles.length;
         selectedFile.fileName = getFileName(file);
         selectedFile.fileType = fileType;
         selectedFile.isPreviewAble = previewAble.includes(fileType);
@@ -52,6 +51,8 @@ export function useAttachment() {
 
         state.selectedFiles.push(selectedFile);
       }
+      hasError.value =
+        state.selectedFiles.filter((file) => file.isError).length > 0;
     }
   }
 
@@ -148,5 +149,6 @@ export function useAttachment() {
     ...toRefs(state),
     setAttachment,
     remove,
+    hasError,
   };
 }
