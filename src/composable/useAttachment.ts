@@ -6,6 +6,7 @@ export function useAttachment() {
   const state = reactive({
     selectedFiles: <Result[]>[],
   });
+  const hasErrors = ref<Array<boolean>>([]);
   const hasError = ref<Boolean>(false);
   const previewAble = ["image"];
 
@@ -21,7 +22,8 @@ export function useAttachment() {
     files: FileList | Array<string> | undefined,
     rules: Rules
   ) {
-    if (files) {
+    hasErrors.value = [];
+    if (files && files.length > 0) {
       for (let i = 0; i < files.length; i++) {
         const selectedFile = <Result>{};
         const file = files[i];
@@ -49,10 +51,13 @@ export function useAttachment() {
             : getIcon(fileType);
         }
 
-        state.selectedFiles.push(selectedFile);
+        if (selectedFile.isError) {
+          hasErrors.value.push(true);
+        } else {
+          state.selectedFiles.push(selectedFile);
+        }
       }
-      hasError.value =
-        state.selectedFiles.filter((file) => file.isError).length > 0;
+      hasError.value = hasErrors.value.includes(true);
     }
   }
 

@@ -20,10 +20,10 @@ const props = defineProps({
   },
   media: { type: [Array, String], required: false },
 });
-const emit = defineEmits(["remove", "mediaHandel"]);
+const emit = defineEmits(["remove", "update:modelValue"]);
 const { setAttachment, selectedFiles, remove, hasError } = useAttachment();
 const fileProps =
-  typeof props.media === "string"
+  typeof props.media === "string" && props.media !== ""
     ? [props.media]
     : Object.assign([], props.media);
 
@@ -54,7 +54,10 @@ const removeAttachment = (index: number) => {
 watch(
   selectedFiles,
   () => {
-    emit("mediaHandel", selectedFiles.value);
+    const files = selectedFiles.value.filter(
+      (item) => typeof item?.file !== "string" && !item.isError
+    );
+    emit("update:modelValue", files);
   },
   { deep: true }
 );
@@ -82,7 +85,7 @@ watch(
       </template>
     </template>
     <div
-      v-if="props.rules.allowMultiple || selectedFiles.length === 0"
+      v-if="props.rules.allowMultiple || selectedFiles.length === 0 || hasError"
       :class="{
         'has-error': hasError,
       }"
@@ -96,10 +99,7 @@ watch(
       <div class="icon">
         <PlusIcon />
       </div>
-      <div class="text">
-        Select or Drag 1 file | PNG,JPG,PDF | &lt;
-        {{ props.rules.maxSizeInKB }}KB
-      </div>
+      <div class="text">Select or Drag media</div>
       <input
         v-if="props.rules.allowMultiple"
         id="attachment"
