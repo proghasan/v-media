@@ -3,17 +3,17 @@ import type Result from "@/types/Result";
 import FilePreviewer from "@/components/FilePreviewer.vue";
 
 export interface Props {
-  attachment: Result;
+  attachment?: Result;
 }
 
 const prop = defineProps<Props>();
 const emit = defineEmits(["remove"]);
-const remove = (index: number) => {
+const remove = (index: number | undefined) => {
   emit("remove", index);
 };
 </script>
 <template>
-  <div class="v-media-card">
+  <div v-if="prop.attachment" class="v-media-card">
     <div class="v-media-card-thumb">
       <FilePreviewer :src="prop.attachment.fileSrc" />
     </div>
@@ -22,7 +22,7 @@ const remove = (index: number) => {
         {{ prop.attachment.fileName }}
       </div>
       <div class="v-media-item">{{ prop.attachment.fileSize }} KB</div>
-      <button class="button-link" @click.prevent="remove(prop.attachment.id)">
+      <button class="button-link" @click.prevent="remove(prop?.attachment?.id)">
         Remove
       </button>
     </div>

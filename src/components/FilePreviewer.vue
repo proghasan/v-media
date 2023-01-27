@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 export interface Props {
-  src: string;
+  src?: string;
 }
 
 const props = defineProps<Props>();

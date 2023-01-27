@@ -1,7 +1,21 @@
 {
-  "name": "vue-media",
-  "version": "0.0.0",
+  "name": "VMedia",
+  "version": "0.0.1",
   "private": true,
+  "main": "./dist/index.js",
+  "module": "./dis/index.cjs",
+  "exports": {
+    ".": "./dist/index.js",
+    "./styles.css": "./dist/style.css"
+  },
+  "browser": {
+    "./styles.css": "./dist/style.css"
+  },
+  "types": "./dist/VMedia.d.ts",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check build-only",
@@ -29,6 +43,7 @@
     "jsdom": "^20.0.3",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.7.1",
+    "rollup-plugin-typescript2": "^0.34.1",
     "sass": "^1.57.1",
     "sass-loader": "^13.2.0",
     "typescript": "~4.7.4",

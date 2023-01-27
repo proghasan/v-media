@@ -4,21 +4,21 @@ import FilePreviewer from "@/components/FilePreviewer.vue";
 import RemoveIcon from "@/assets/icons/RemoveIcon.vue";
 
 export interface Props {
-  attachment: Result;
+  attachment?: Result;
 }
 
 const prop = defineProps<Props>();
 const emit = defineEmits(["remove"]);
-const remove = (index: number) => {
+const remove = (index: number | undefined) => {
   emit("remove", index);
 };
 </script>
 <template>
-  <div class="v-media-card">
-    <FilePreviewer :src="prop.attachment.fileSrc"/>
+  <div v-if="prop.attachment" class="v-media-card">
+    <FilePreviewer :src="prop.attachment.fileSrc" />
     <div class="overlay">
       <div class="content">
-        <RemoveIcon @click.prevent="remove(prop.attachment.id)"/>
+        <RemoveIcon @click.prevent="remove(prop?.attachment?.id)" />
       </div>
     </div>
   </div>

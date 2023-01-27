@@ -2,9 +2,7 @@
 import VMedia from "@/components/VMedia.vue";
 import { ref } from "vue";
 
-const removeEvent = (id: string) => {
-  console.log("remove id", id);
-};
+const removeEvent = (id: string) => {};
 const form = ref({
   media: null,
 });
@@ -38,16 +36,7 @@ const medias = [
           </div>
           <div class="mb-3">
             <label class="form-label">File</label>
-            <v-media
-              v-model="form.media"
-              :media="medias"
-              :rules="{
-                accept: ['image/png', 'image/jpeg', 'application/pdf'],
-                maxSizeInKB: 1024,
-                allowMultiple: true,
-              }"
-              @remove="removeEvent"
-            />
+            <v-media />
           </div>
           <button class="btn btn-primary" type="submit">Save & Change</button>
         </form>

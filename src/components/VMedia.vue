@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import PlusIcon from "../assets/icons/PlusIcon.vue";
-import { PropType, ref, watch } from "vue";
+import { type PropType, ref, watch } from "vue";
 import type Rules from "@/types/Rules";
 import { useAttachment } from "@/composable/useAttachment";
 import PreviewCard from "@/components/PreviewCard.vue";
@@ -31,13 +31,14 @@ if (fileProps && fileProps?.length > 0) {
   setAttachment(fileProps, props.rules);
 }
 const active = ref(false);
-const attachment = ref("");
+const attachment = ref<HTMLInputElement | null>(null);
 const toggleActive = () => {
   active.value = !active.value;
 };
-const clickHandel = (): void => {
-  attachment.value.click();
+const clickHandel = (event: any) => {
+  attachment.value?.click();
 };
+
 const dropHandel = (event: DragEvent): void => {
   const files = event.dataTransfer?.files;
   setAttachment(files, props.rules);
@@ -104,7 +105,7 @@ watch(
         v-if="props.rules.allowMultiple"
         id="attachment"
         ref="attachment"
-        :accept="props.rules.accept"
+        :accept="props.rules.accept.toString()"
         hidden
         multiple
         name="attachment"
@@ -115,7 +116,7 @@ watch(
         v-else
         id="attachment"
         ref="attachment"
-        :accept="props.rules.accept"
+        :accept="props.rules.accept.toString()"
         hidden
         name="attachment"
         type="file"
@@ -125,7 +126,9 @@ watch(
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
+@import "../assets/vmedia.css";
+
 .v-media-wrapper {
   .v-media {
     width: 100%;
